@@ -12,8 +12,8 @@ with open("README.rst", "r") as fh:
 
 setup(
     name='Flask-Logify',
-    version='1.0',
-    url='https://github.com/cs91chris/flask-logify',
+    version='1.0.1',
+    url='https://github.com/cs91chris/flask_logify',
     license='MIT',
     author='cs91chris',
     author_email='cs91chris@voidbrain.me',
@@ -25,7 +25,7 @@ setup(
     platforms='any',
     install_requires=[
         'Flask==1.0.2',
-        'PyYAML==3.13'
+        'PyYAML==5.1'
     ],
     classifiers=[
         'Environment :: Web Environment',

@@ -1,5 +1,3 @@
-import json
-
 from flask import request
 from flask import current_app as app
 
@@ -26,13 +24,7 @@ def hook_log_request():
 
     data = request.get_data(as_text=True)
     if data:
-        if request.headers.get('Content-Type') == 'application/json':
-            try:
-                data = json.dumps(json.loads(data), indent=4)
-            except json.decoder.JSONDecodeError:
-                app.logger.warning("request body type does not match Content-Type")
-
-        app.logger.debug("REQUEST BODY\n%s", data)
+        app.logger.debug("REQUEST BODY\n{}".format(data))
 
 
 def hook_log_response(response):

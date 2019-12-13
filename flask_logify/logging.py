@@ -2,13 +2,12 @@ import sys
 import yaml
 
 import logging.config
-import logging.handlers
+from logging.handlers import SysLogHandler
 
 from yaml.parser import ParserError
 from yaml.scanner import ScannerError
 
 from flask import current_app
-
 
 from flask_logify.hooks import hook_log_request
 from flask_logify.hooks import hook_log_response
@@ -54,7 +53,15 @@ class FlaskLogging:
             app.logger.warning("No 'LOG_FILE_CONF' provided using default configuration")
 
 
-class FlaskSysLogHandler(logging.handlers.SysLogHandler):
+class FlaskSysLogHandler(SysLogHandler):
+    def __init__(self, **kwargs):
+        """
+
+        :param kwargs:
+        """
+        super().__init__(**kwargs)
+        self.facility = kwargs.get('facility') or SysLogHandler.LOG_USER
+
     def emit(self, record):
         """
 
@@ -62,5 +69,5 @@ class FlaskSysLogHandler(logging.handlers.SysLogHandler):
         """
         with current_app.app_context():
             priority = self.encodePriority(self.facility, self.mapPriority(record.levelname))
-            record.ident = current_app.config['LOG_APP_NAME'] + "[" + str(priority) + "]:"
+            record.ident = "{}[{}]:".format(current_app.config['LOG_APP_NAME'], str(priority))
             super(FlaskSysLogHandler, self).emit(record)

@@ -24,8 +24,8 @@ setup(
     include_package_data=True,
     platforms='any',
     install_requires=[
-        'Flask==1.0.2',
-        'PyYAML==5.1'
+        'Flask>=1',
+        'PyYAML>=5'
     ],
     classifiers=[
         'Environment :: Web Environment',

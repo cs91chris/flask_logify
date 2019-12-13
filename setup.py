@@ -5,6 +5,8 @@ Flask-Logify
 Logging configuration for flask application
 """
 from setuptools import setup
+from flask_logify import author
+from flask_logify import __version__
 
 
 with open("README.rst", "r") as fh:
@@ -12,11 +14,11 @@ with open("README.rst", "r") as fh:
 
 setup(
     name='Flask-Logify',
-    version='1.0.1',
+    version=__version__,
     url='https://github.com/cs91chris/flask_logify',
     license='MIT',
-    author='cs91chris',
-    author_email='cs91chris@voidbrain.me',
+    author=author['name'],
+    author_email=author['email'],
     description='Logging configuration for flask application',
     long_description=long_description,
     packages=['flask_logify'],

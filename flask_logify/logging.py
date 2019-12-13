@@ -19,13 +19,24 @@ class FlaskLogging:
 
         :param app:
         """
+        self._conf = {}
+
         if app is not None:
             self.init_app(app)
 
-    def init_app(self, app):
+    @property
+    def conf(self):
         """
 
-        :param app:
+        :return:
+        """
+        return self._conf
+
+    def init_app(self, app, **kwargs):
+        """
+
+        :param app: Flask app instance
+        :param kwargs: extra logging configuration
         """
         if not hasattr(app, 'extensions'):
             app.extensions = dict()
@@ -38,19 +49,19 @@ class FlaskLogging:
         app.after_request_funcs.setdefault(None, []).append(hook_log_response)
 
         if 'LOG_FILE_CONF' in app.config:
-            log_file = app.config['LOG_FILE_CONF']
-            with open(log_file) as f:
+            with open(app.config['LOG_FILE_CONF']) as f:
                 try:
-                    dictionary = yaml.safe_load(f)
+                    self._conf = yaml.safe_load(f)
                 except (ParserError, ScannerError) as exc:
                     print(exc, file=sys.stderr)
                     sys.exit(1)
 
-            logging.config.dictConfig(dictionary)
-
             app.logger = logging.getLogger(app.config['LOG_LOGGER_NAME'])
         else:
             app.logger.warning("No 'LOG_FILE_CONF' provided using default configuration")
+
+        self._conf.update(kwargs)
+        logging.config.dictConfig(self._conf)
 
 
 class FlaskSysLogHandler(SysLogHandler):

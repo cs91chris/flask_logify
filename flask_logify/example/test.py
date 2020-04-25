@@ -6,6 +6,7 @@ app = Flask(__name__)
 app.config['LOG_FILE_CONF'] = 'log.yaml'
 
 logging = FlaskLogging()
-logging.init_app(app)
+with app.app_context():
+    logging.init_app(app)
 
 app.run()

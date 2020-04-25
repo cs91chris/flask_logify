@@ -1,16 +1,11 @@
 import sys
-import yaml
-
 import logging.config
-from logging.handlers import SysLogHandler
 
+import yaml
 from yaml.parser import ParserError
 from yaml.scanner import ScannerError
 
-from flask import current_app
-
-from flask_logify.hooks import hook_log_request
-from flask_logify.hooks import hook_log_response
+from flask_logify.hooks import hook_log_request, hook_log_response
 
 
 class FlaskLogging:
@@ -43,7 +38,7 @@ class FlaskLogging:
         app.extensions['logging'] = self
 
         app.config.setdefault('LOG_APP_NAME', 'flask')
-        app.config.setdefault('LOG_LOGGER_NAME', 'development')
+        app.config.setdefault('LOG_LOGGER_NAME', 'flask')
 
         app.before_request_funcs.setdefault(None, []).append(hook_log_request)
         app.after_request_funcs.setdefault(None, []).append(hook_log_response)
@@ -62,23 +57,3 @@ class FlaskLogging:
 
         self._conf.update(kwargs)
         logging.config.dictConfig(self._conf)
-
-
-class FlaskSysLogHandler(SysLogHandler):
-    def __init__(self, **kwargs):
-        """
-
-        :param kwargs:
-        """
-        super().__init__(**kwargs)
-        self.facility = kwargs.get('facility') or SysLogHandler.LOG_USER
-
-    def emit(self, record):
-        """
-
-        :param record:
-        """
-        with current_app.app_context():
-            priority = self.encodePriority(self.facility, self.mapPriority(record.levelname))
-            record.ident = "{}[{}]:".format(current_app.config['LOG_APP_NAME'], str(priority))
-            super(FlaskSysLogHandler, self).emit(record)

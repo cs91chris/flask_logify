@@ -30,19 +30,19 @@ handlers:
         encoding: utf8
 
 loggers:
-    development:
+    flask-development:
         handlers: [console]
         propogate: yes
         level: DEBUG
-    testing:
+    flask-testing:
         handlers: [file]
         propogate: yes
         level: DEBUG
-    staging:
+    flask-staging:
         handlers: [file, syslog]
         propogate: yes
         level: DEBUG
-    production:
+    flask-production:
         handlers: [syslog]
         propogate: yes
         level: INFO

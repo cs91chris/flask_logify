@@ -32,7 +32,8 @@ Only yaml format is supported.
     app.config['LOG_FILE_CONF'] = 'log.yaml'
 
     logging = FlaskLogging()
-    logging.init_app(app)
+    with app.app_context():
+        logging.init_app(app)
 
     app.run()
 
@@ -45,6 +46,6 @@ Configuration
 
 1. ``LOG_FILE_CONF``: *(default: None)* absolute path of configuration file
 2. ``LOG_APP_NAME``: *(default: flask)* the PROGRAM field of the log messages
-3. ``LOG_LOGGER_NAME``: *(default: development)* usually is the same of FLASK_ENV
+3. ``LOG_LOGGER_NAME``: *(default: flask-development)* usually is flask-{FLASK_ENV}
 
 License MIT

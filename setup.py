@@ -5,9 +5,8 @@ Flask-Logify
 Logging configuration for flask application
 """
 from setuptools import setup
-from flask_logify import author
-from flask_logify import __version__
 
+from flask_logify import author, __version__
 
 with open("README.rst", "r") as fh:
     long_description = fh.read()
@@ -26,8 +25,8 @@ setup(
     include_package_data=True,
     platforms='any',
     install_requires=[
-        'Flask',
-        'PyYAML'
+        'Flask==1.1.*',
+        'PyYAML==5.*'
     ],
     classifiers=[
         'Environment :: Web Environment',

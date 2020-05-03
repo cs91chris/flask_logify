@@ -1,7 +1,7 @@
 Flask-Logify
 ==============
 
-Advanced Logging configuration for flask application based on yaml file.
+Advanced Logging configuration for flask application based on yaml or json file.
 
 See `logging.config <https://docs.python.org/3/library/logging.config.html>`__
 
@@ -20,7 +20,8 @@ Example usage
 ^^^^^^^^^^^^^
 
 An example of log file configuration is under example folder.
-Only yaml format is supported.
+
+Only yaml or json format are supported.
 
 .. code:: python
 

@@ -80,7 +80,7 @@ def dump_response(response, force=False):
     else:
         level = 'UNKNOWN'
 
-    return "({level}) STATUS {status}\n\n{headers}\n\n{body}\n".format(
+    return "{level} STATUS {status}\n\n{headers}\n\n{body}\n".format(
         level=level,
         status=response.status,
         headers=dump_headers(response.headers, force),

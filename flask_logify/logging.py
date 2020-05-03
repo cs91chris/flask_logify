@@ -15,7 +15,6 @@ class FlaskLogging:
         :param app:
         """
         self._conf = {}
-        self._lock = False
         self._log_request = None
         self._log_response = None
 
@@ -43,7 +42,7 @@ class FlaskLogging:
 
         if not hasattr(app, 'extensions'):
             app.extensions = dict()
-        app.extensions['logging'] = self
+        app.extensions['logify'] = self
 
         app.config.setdefault('LOG_APP_NAME', 'flask')
         app.config.setdefault('LOG_LOGGER_NAME', 'flask-development')
@@ -62,12 +61,20 @@ class FlaskLogging:
             except OSError as exc:
                 app.logger.exception(exc, stack_info=False)
 
-            self._conf.update(kwargs)
-            logging.config.dictConfig(self._conf)
-            app.logger = logging.getLogger(app.config['LOG_LOGGER_NAME'])
+            try:
+                self._conf.update(kwargs)
+                logging.config.dictConfig(self._conf)
+                app.logger = logging.getLogger(app.config['LOG_LOGGER_NAME'])
+            except ValueError as exc:
+                app.logger.error('bad configuration file: {}'.format(app.config['LOG_FILE_CONF']))
+                app.logger.error('the configuration below\n{}'.format(self._conf))
+                app.logger.exception(exc, stack_info=False)
         else:
             app.logger.warning("No 'LOG_FILE_CONF' provided using default configuration")
 
-        if app.config.get('DEBUG'):
-            # overwrites file log configuration in order to force the debug level
+        if app.config.get('DEBUG') is True:
             app.logger.setLevel('DEBUG')
+            werkzeug_logger = logging.getLogger('werkzeug')
+            werkzeug_logger.setLevel(logging.DEBUG)
+            for hdl in app.logger.handlers:
+                werkzeug_logger.addHandler(hdl)

@@ -8,14 +8,23 @@ class DisableByPathFilter(logging.Filter):
         :param path:
         :param name:
         """
-        self._path = path
         super().__init__(name)
+
+        # add a space or ? after path
+        # to ensure sub-paths are not accidentally excluded from logging
+        self._excluded = (
+            "{} ".format(path),
+            "{}?".format(path),
+        )
 
     def filter(self, record):
         """
-        add a space or ? after path to ensure subpaths are not excluded from logging
 
         :param record:
+        :return: False if message must be filtered
         """
-        mess = record.getMessage()
-        return not (f"{self._path} " in mess or f"{self._path}?" in mess)
+        for i in self._excluded:
+            if i in record.getMessage():
+                return False
+
+        return True

@@ -40,7 +40,10 @@ def dump_body(r, force=False):
     :return:
     """
     if force or cap.config['DEBUG'] is True:
-        return r.get_data(as_text=True) or 'empty data'
+        try:
+            return r.get_data(as_text=True) or 'empty data'
+        except UnicodeError:
+            return 'body not dumped: invalid encoding or binary'
     else:
         return 'body not dumped: app not in DEBUG mode'
 

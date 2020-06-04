@@ -25,7 +25,7 @@ def dump_headers(hdr, force=False):
             k1: v1
             k2: v2
     """
-    if force or cap.config['DEBUG'] is True:
+    if force:
         return '\n'.join('{}: {}'.format(k, v) for k, v in hdr.items())
     else:
         return 'headers not dumped'
@@ -39,7 +39,7 @@ def dump_body(r, force=False):
     :param force:
     :return:
     """
-    if force or cap.config['DEBUG'] is True:
+    if force:
         try:
             return r.get_data(as_text=True) or 'empty data'
         except UnicodeError:
@@ -96,7 +96,7 @@ def hook_log_request():
 
     """
     cap.logger.info("INCOMING REQUEST: {}".format(
-        dump_request()
+        dump_request(cap.config['LOG_FORCE_DUMP'])
     ))
 
 
@@ -107,6 +107,6 @@ def hook_log_response(response):
     """
     cap.logger.debug("RESPONSE at {} {}".format(
         request.path,
-        dump_response(response)
+        dump_response(response, cap.config['LOG_FORCE_DUMP'])
     ))
     return response

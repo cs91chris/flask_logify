@@ -43,8 +43,12 @@ class FlaskLogging:
             app.extensions = dict()
         app.extensions['logify'] = self
 
+        app.config.setdefault('LOG_FORCE_DUMP', app.config.get('DEBUG'))
         app.config.setdefault('LOG_APP_NAME', 'flask')
-        app.config.setdefault('LOG_LOGGER_NAME', 'flask-development')
+        app.config.setdefault('LOG_LOGGER_NAME', '{}-{}'.format(
+            app.config['LOG_APP_NAME'],
+            app.config.get('FLASK_ENV') or 'development'
+        ))
 
         app.before_request_funcs.setdefault(None, []).append(log_req)
         app.after_request_funcs.setdefault(None, []).append(log_res)

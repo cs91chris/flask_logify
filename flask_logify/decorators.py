@@ -42,6 +42,11 @@ def log_disabled_by_path(loggers=None, path=None):
     :return:
     """
     def response(fun):
+        """
+
+        :param fun:
+        :return:
+        """
         @log_disabled(
             DisableByPathFilter,
             loggers=loggers,

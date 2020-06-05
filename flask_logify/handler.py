@@ -1,6 +1,6 @@
 from logging.handlers import SysLogHandler
 
-from flask import current_app
+from flask import current_app as cap
 
 
 class FlaskSysLogHandler(SysLogHandler):
@@ -11,8 +11,8 @@ class FlaskSysLogHandler(SysLogHandler):
         """
         super().__init__(**kwargs)
         self.facility = kwargs.get('facility') or SysLogHandler.LOG_USER
-        with current_app.app_context():
-            self._app_name = current_app.config['LOG_APP_NAME']
+        with cap.app_context():
+            self._app_name = cap.config['LOG_APP_NAME']
 
     def emit(self, record):
         """

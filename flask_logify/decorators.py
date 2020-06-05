@@ -1,7 +1,7 @@
 import logging
 from functools import wraps
 
-from flask_logify.filters import DisableByPathFilter
+from flask_logify.filters import PathFilter
 
 
 def log_disabled(filter_class, loggers=None, **options):
@@ -31,6 +31,7 @@ def log_disabled(filter_class, loggers=None, **options):
         def wrapper(*args, **kwargs):
             return fun(*args, **kwargs)
         return wrapper
+
     return response
 
 
@@ -48,7 +49,7 @@ def log_disabled_by_path(loggers=None, path=None):
         :return:
         """
         @log_disabled(
-            DisableByPathFilter,
+            PathFilter,
             loggers=loggers,
             path=path or fun.__name__
         )
@@ -57,4 +58,5 @@ def log_disabled_by_path(loggers=None, path=None):
             return fun(*args, **kwargs)
 
         return wrapper
+
     return response

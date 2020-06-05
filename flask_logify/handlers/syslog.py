@@ -11,8 +11,7 @@ class FlaskSysLogHandler(SysLogHandler):
         """
         super().__init__(**kwargs)
         self.facility = kwargs.get('facility') or SysLogHandler.LOG_USER
-        with cap.app_context():
-            self._app_name = cap.config['LOG_APP_NAME']
+        self._app_name = cap.config['LOG_APP_NAME']
 
     def emit(self, record):
         """

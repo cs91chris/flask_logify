@@ -1,6 +1,8 @@
 import json
+import logging
 import logging.config
 import sys
+from functools import wraps
 
 import yaml
 from yaml.parser import ParserError
@@ -81,6 +83,39 @@ class FlaskLogging:
                     print(yex, file=sys.stderr)
                     print(jex, file=sys.stderr)
                     sys.exit(1)
+
+    @staticmethod
+    def disabled(filter_class, loggers=None, **options):
+        """
+        Disable log messages for log handler for a specific Flask routes
+
+        :param (class) filter_class: subclass of logging.Filter
+        :param (list) loggers: logger name's list
+        :param (str) options: passed to filter class constructor
+        :return: wrapped function
+        """
+        if not issubclass(filter_class, logging.Filter):
+            raise ValueError(
+                "'{}' must be subclass of {}".format(filter_class, logging.Filter.__name__)
+            )
+
+        if not loggers:
+            loggers = [None]  # root logger has no name
+            # noinspection PyUnresolvedReferences
+            loggers += list(logging.root.manager.loggerDict.keys())
+
+        def response(fun):
+            for log in loggers:
+                logger = logging.getLogger(log or '')
+                logger.addFilter(filter_class(**options))
+
+            @wraps(fun)
+            def wrapper(*args, **kwargs):
+                return fun(*args, **kwargs)
+
+            return wrapper
+
+        return response
 
     @staticmethod
     def set_default_config(app):

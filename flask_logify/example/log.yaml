@@ -6,10 +6,12 @@ formatters:
         format: "[%(asctime)s][%(levelname)s][%(module)s:%(lineno)d]: %(message)s"
     syslog:
         format: "%(ident)s[%(asctime)s][%(levelname)s]: %(message)s"
+    json:
+        format: '{"name": "%(name)s","level":"%(levelname)s","datetime":"%(asctime)s","message":%(message)s}'
 
 handlers:
     syslog:
-        class: flask_logify.FlaskSysLogHandler
+        class: flask_logify.handlers.syslog.FlaskSysLogHandler
         address: [localhost, 514]
         formatter: syslog
         facility: user

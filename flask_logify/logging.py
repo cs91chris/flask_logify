@@ -126,8 +126,8 @@ class FlaskLogging:
         app.config.setdefault('LOG_REQ_HEADERS', [])
         app.config.setdefault('LOG_RESP_HEADERS', [])
         app.config.setdefault('LOG_SKIP_DUMP', not app.config.get('DEBUG'))
-        app.config.setdefault('LOG_RESP_FORMAT', "{level} STATUS {status}\n{headers}\n\n{body}\n")
-        app.config.setdefault('LOG_REQ_FORMAT', "{address} {method} {scheme} {path}\n{headers}\n\n{body}\n")
+        app.config.setdefault('LOG_RESP_FORMAT', "{level} STATUS {status} {headers} {body}")
+        app.config.setdefault('LOG_REQ_FORMAT', "{address} {method} {scheme} {path} {headers} {body}")
         app.config.setdefault('LOG_APP_NAME', 'flask')
         app.config.setdefault('LOG_LOGGER_NAME', '{}-{}'.format(
             app.config['LOG_APP_NAME'],

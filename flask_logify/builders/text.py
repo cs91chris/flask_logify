@@ -4,6 +4,15 @@ from .base import LogBuilder
 
 
 class LogTextBuilder(LogBuilder):
+    @staticmethod
+    def padding(text):
+        """
+
+        :param text:
+        :return:
+        """
+        return "\n{}".format(text)
+
     def dump_request(self):
         """
 
@@ -24,8 +33,8 @@ class LogTextBuilder(LogBuilder):
             method=request.method,
             scheme=request.scheme,
             path=request.full_path,
-            headers=headers,
-            body=body
+            headers=headers or '',
+            body=body or ''
         )))
 
     def dump_response(self, response):
@@ -58,14 +67,13 @@ class LogTextBuilder(LogBuilder):
             "OUTGOING RESPONSE at {} {}".format(request.path, cap.config['LOG_RESP_FORMAT'].format(
                 level=level,
                 status=response.status,
-                headers=headers,
-                body=body
+                headers=headers or '',
+                body=body or ''
             ))
         )
         return response
 
-    @staticmethod
-    def dump_headers(hdr, only=()):
+    def dump_headers(self, hdr, only=()):
         """
         dumps http headers
 
@@ -75,17 +83,12 @@ class LogTextBuilder(LogBuilder):
                 k1: v1
                 k2: v2
         """
-
-        def dump(h):
-            return '\n'.join('{}: {}'.format(k, v) for k, v in h.items())
-
         if only:
-            return dump({k: hdr[k] for k in only if k in hdr})
+            hdr = {k: hdr[k] for k in only if k in hdr}
 
-        return dump(hdr)
+        return self.padding('\n'.join('{}: {}'.format(k, v) for k, v in hdr.items()))
 
-    @staticmethod
-    def dump_body(r):
+    def dump_body(self, r):
         """
         dump http body as plain text
 
@@ -93,6 +96,6 @@ class LogTextBuilder(LogBuilder):
         :return:
         """
         try:
-            return r.get_data(as_text=True) or 'empty data'
+            return self.padding(r.get_data(as_text=True))
         except UnicodeError:
-            return 'body not dumped: invalid encoding or binary'
+            return 'body not dumped: invalid encoding or binary file'

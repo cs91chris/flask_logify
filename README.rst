@@ -14,7 +14,9 @@ The dump of request or response are made by builders, there are two concrete imp
   1. ``LogTextBuilder``: message as plain text (configurable).
   2. ``LogJSONBuilder``: message as json format.
 
-You can create your own builder by extending class ``LogBuilder``.
+You can create your own builder by extending class ``LogBuilder``. In order to get the correct remote address
+you can override ``LogBuilder.get_remote_address`` method or you can inject a function in ``LogBuilder`` constructor.
+
 See example usage in `example/text.py <./flask_logify/example/text.py>`__.
 
 ``FlaskLogging`` as a decorator attribute with which you can disable log messages for a specific route,

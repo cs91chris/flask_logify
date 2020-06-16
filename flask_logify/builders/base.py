@@ -2,6 +2,13 @@ from flask import request
 
 
 class LogBuilder:
+    def __init__(self, get_remote=lambda: None):
+        """
+
+        :param get_remote:
+        """
+        self._get_remote = get_remote
+
     def dump_request(self):
         """
 
@@ -16,15 +23,9 @@ class LogBuilder:
         """
         raise NotImplementedError
 
-    @staticmethod
-    def get_remote_address():
+    def get_remote_address(self):
         """
 
         :return: client ip address
         """
-        if request.environ.get('HTTP_X_FORWARDED_FOR'):
-            request.environ['REMOTE_ADDR'] = request.environ['HTTP_X_FORWARDED_FOR']
-        elif request.environ.get('HTTP_X_REAL_IP'):
-            request.environ['REMOTE_ADDR'] = request.environ['HTTP_X_REAL_IP']
-
-        return request.environ['REMOTE_ADDR']
+        return self._get_remote() or request.remote_addr

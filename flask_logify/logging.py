@@ -30,12 +30,11 @@ class FlaskLogging:
         """
         return self._conf
 
-    def init_app(self, app, builder=LogTextBuilder(), **kwargs):
+    def init_app(self, app, builder=LogTextBuilder()):
         """
 
         :param app: Flask app instance
         :param builder:
-        :param kwargs: extra logging configuration
         """
         if not hasattr(app, 'extensions'):
             app.extensions = dict()
@@ -52,9 +51,11 @@ class FlaskLogging:
                 self.conf_from_file(app.config['LOG_FILE_CONF'])
             except OSError as exc:
                 app.logger.exception(exc, stack_info=False)
+        elif 'LOGGING' in app.config:
+            self._conf = app.config['LOGGING']
 
+        if self._conf:
             try:
-                self._conf.update(kwargs)
                 logging.config.dictConfig(self._conf)
                 app.logger = logging.getLogger(app.config['LOG_LOGGER_NAME'])
             except ValueError as exc:
@@ -62,7 +63,7 @@ class FlaskLogging:
                 app.logger.error('the configuration below\n{}'.format(self._conf))
                 app.logger.exception(exc, stack_info=False)
         else:
-            app.logger.warning("No 'LOG_FILE_CONF' provided using default configuration")
+            app.logger.warning("No logging configuration provided using default configuration")
 
         if app.config.get('DEBUG') is True:
             app.logger.setLevel('DEBUG')

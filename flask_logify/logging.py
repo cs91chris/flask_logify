@@ -1,12 +1,8 @@
-import json
 import logging
 import logging.config
-import sys
 from functools import wraps
 
 import yaml
-from yaml.parser import ParserError
-from yaml.scanner import ScannerError
 
 from .builders import LogTextBuilder
 
@@ -48,8 +44,9 @@ class FlaskLogging:
 
         if 'LOG_FILE_CONF' in app.config:
             try:
-                self.conf_from_file(app.config['LOG_FILE_CONF'])
-            except OSError as exc:
+                with open(app.config['LOG_FILE_CONF']) as f:
+                    self._conf = yaml.safe_load(f)
+            except (OSError, IOError, yaml.YAMLError) as exc:
                 app.logger.exception(exc, stack_info=False)
         elif 'LOGGING' in app.config:
             self._conf = app.config['LOGGING']
@@ -68,22 +65,6 @@ class FlaskLogging:
         if app.config.get('DEBUG') is True:
             app.logger.setLevel('DEBUG')
             self.set_werkzeug_handlers(app.logger.handlers)
-
-    def conf_from_file(self, filename):
-        """
-
-        :param filename:
-        """
-        with open(filename) as f:
-            try:
-                self._conf = yaml.safe_load(f)
-            except (ParserError, ScannerError) as yex:
-                try:
-                    self._conf = json.load(f)
-                except (TypeError, json.JSONDecodeError) as jex:
-                    print(yex, file=sys.stderr)
-                    print(jex, file=sys.stderr)
-                    sys.exit(1)
 
     @staticmethod
     def disabled(filter_class, loggers=None, **options):

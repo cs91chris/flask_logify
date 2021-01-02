@@ -63,14 +63,13 @@ class LogTextBuilder(LogBuilder):
         if '{body}' in cap.config['LOG_RESP_FORMAT'] and not skip:
             body = self.dump_body(response)
 
-        cap.logger.debug(
-            "OUTGOING RESPONSE at {} {}".format(request.path, cap.config['LOG_RESP_FORMAT'].format(
-                level=level,
-                status=response.status,
-                headers=headers or '',
-                body=body or ''
-            ))
+        dump_resp = cap.config['LOG_RESP_FORMAT'].format(
+            level=level,
+            status=response.status,
+            headers=headers or '',
+            body=body or ''
         )
+        cap.logger.debug("OUTGOING RESPONSE at {} {}".format(request.path, dump_resp))
         return response
 
     def dump_headers(self, hdr, only=()):

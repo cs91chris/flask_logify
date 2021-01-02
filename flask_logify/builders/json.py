@@ -15,10 +15,10 @@ class LogJSONBuilder(LogBuilder):
         :return:
         """
         return json.dumps({
-            'appName': cap.config['LOG_APP_NAME'],
+            'appName':    cap.config['LOG_APP_NAME'],
             'serverName': cap.config['SERVER_NAME'],
-            'timestamp': datetime.utcnow().timestamp(),
-            'type': identifier,
+            'timestamp':  datetime.utcnow().timestamp(),
+            'type':       identifier,
             **payload,
         })
 
@@ -84,6 +84,7 @@ class LogJSONBuilder(LogBuilder):
                 k1: v1
                 k2: v2
         """
+
         def dump(h):
             return {k: v for k, v in h.items()}
 

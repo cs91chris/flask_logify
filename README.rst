@@ -66,9 +66,10 @@ Configuration
 ^^^^^^^^^^^^^
 Base configuration keys:
 
-  1. ``LOG_FILE_CONF``: *(default: None)* absolute path of configuration file
-  2. ``LOG_APP_NAME``: *(default: flask)* the PROGRAM field of the log messages
-  3. ``LOG_LOGGER_NAME``: *(default: flask-development)* usually is {LOG_APP_NAME}-{FLASK_ENV}
+  1. ``LOGGING``: *(default: None)* dict logging configuration
+  2. ``LOG_FILE_CONF``: *(default: None)* absolute path of configuration file (has priority on LOGGING)
+  3. ``LOG_APP_NAME``: *(default: flask)* the PROGRAM field of the log messages
+  4. ``LOG_LOGGER_NAME``: *(default: flask-development)* usually is {LOG_APP_NAME}-{FLASK_ENV}
 
 Text and JSON builder configuration keys:
 

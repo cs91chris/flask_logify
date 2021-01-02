@@ -42,13 +42,13 @@ class FlaskLogging:
             app.before_request_funcs.setdefault(None, []).append(builder.dump_request)
             app.after_request_funcs.setdefault(None, []).append(builder.dump_response)
 
-        if 'LOG_FILE_CONF' in app.config:
+        if app.config['LOG_FILE_CONF']:
             try:
                 with open(app.config['LOG_FILE_CONF']) as f:
                     self._conf = yaml.safe_load(f)
             except (OSError, IOError, yaml.YAMLError) as exc:
                 app.logger.exception(exc, stack_info=False)
-        elif 'LOGGING' in app.config:
+        elif app.config['LOGGING']:
             self._conf = app.config['LOGGING']
 
         if self._conf:
@@ -101,6 +101,8 @@ class FlaskLogging:
 
         param app: Flask app instance
         """
+        app.config.setdefault('LOG_FILE_CONF', None)
+        app.config.setdefault('LOGGING', None)
         app.config.setdefault('LOG_REQ_HEADERS', [])
         app.config.setdefault('LOG_RESP_HEADERS', [])
         app.config.setdefault('LOG_SKIP_DUMP', not app.config.get('DEBUG'))

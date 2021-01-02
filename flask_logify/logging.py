@@ -62,10 +62,6 @@ class FlaskLogging:
         else:
             app.logger.warning("No logging configuration provided using default configuration")
 
-        if app.config.get('DEBUG') is True:
-            app.logger.setLevel('DEBUG')
-            self.set_werkzeug_handlers(app.logger.handlers)
-
     @staticmethod
     def disabled(filter_class, loggers=None, **options):
         """
@@ -115,14 +111,3 @@ class FlaskLogging:
             app.config['LOG_APP_NAME'],
             app.config.get('FLASK_ENV') or 'development'
         ))
-
-    @staticmethod
-    def set_werkzeug_handlers(handlers):
-        """
-
-        :param handlers:
-        """
-        werkzeug_logger = logging.getLogger('werkzeug')
-        werkzeug_logger.setLevel(logging.DEBUG)
-        for hdl in handlers:
-            werkzeug_logger.addHandler(hdl)

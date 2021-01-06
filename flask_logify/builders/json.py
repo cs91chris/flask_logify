@@ -20,7 +20,7 @@ class LogJSONBuilder(LogBuilder):
             'timestamp':  datetime.utcnow().timestamp(),
             'type':       identifier,
             **payload,
-        })
+        }, separators=(':', ','))
 
     def dump_request(self):
         """

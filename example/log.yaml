@@ -7,11 +7,12 @@ formatters:
     syslog:
         format: "%(ident)s[%(asctime)s][%(levelname)s]: %(message)s"
     json:
-        format: '{"name": "%(name)s","level":"%(levelname)s","datetime":"%(asctime)s","message":%(message)s}'
+        class: flask_logify.formatters.RequestIDFormatter
+        format: '{"requestId":"%(request_id)s","name":"%(name)s","level":"%(levelname)s","datetime":"%(asctime)s","message":%(message)s}'
 
 handlers:
     syslog:
-        class: flask_logify.handlers.syslog.FlaskSysLogHandler
+        class: flask_logify.handlers.FlaskSysLogHandler
         address: [localhost, 514]
         formatter: syslog
         facility: user
@@ -19,7 +20,7 @@ handlers:
 
     console:
         class: logging.StreamHandler
-        formatter: default
+        formatter: json
         level: DEBUG
 
     file:

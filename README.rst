@@ -1,12 +1,12 @@
 Flask-Logify
 ==============
 
-|download| |version|
+|version|
 
 Advanced Logging configuration for flask application based on yaml or json file.
 See `logging.config <https://docs.python.org/3/library/logging.config.html>`__
 
-NOTE: If you want to use ``flask_logify.handlers.syslog.FlaskSysLogHandler``
+NOTE: If you want to use ``flask_logify.handlers.FlaskSysLogHandler``
 you must init this extension with an app context.
 
 The dump of request or response are made by builders, there are two concrete implementations:
@@ -79,14 +79,12 @@ Text and JSON builder configuration keys:
 
 Text builder only:
 
-  1. ``LOG_RESP_FORMAT``: *(default: "{level} STATUS {status}\n\n{headers}\n\n{body}\n")* log message format for
-     response
-  2. ``LOG_REQ_FORMAT``: *(default: "{addr} {method} {scheme} {path}\n\n{headers}\n\n{body}\n")* log message format
-     for request
+  1. ``LOG_RESP_FORMAT``: *(default: "{level} STATUS {status}\n\n{headers}\n\n{body}\n")*
+     log message format for response
+  2. ``LOG_REQ_FORMAT``: *(default: "{addr} {method} {scheme} {path}\n\n{headers}\n\n{body}\n")*
+     log message format for request
 
 
 License MIT
 
-
-.. |download| image:: https://pypip.in/download/flask_logify/badge.png
 .. |version| image:: https://pypip.in/version/flask_logify/badge.png

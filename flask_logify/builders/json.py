@@ -56,7 +56,7 @@ class LogJSONBuilder(LogBuilder):
         body = None
         headers = None
         skip = cap.config['LOG_SKIP_DUMP']
-        hdr = cap.config['LOG_REQ_HEADERS']
+        hdr = cap.config['LOG_RESP_HEADERS']
 
         if hdr or not skip:
             headers = self.dump_headers(response.headers, hdr)

@@ -55,7 +55,7 @@ class LogTextBuilder(LogBuilder):
         body = None
         headers = None
         skip = cap.config['LOG_SKIP_DUMP']
-        hdr = cap.config['LOG_REQ_HEADERS']
+        hdr = cap.config['LOG_RESP_HEADERS']
 
         if '{headers}' in cap.config['LOG_RESP_FORMAT'] and (hdr or not skip):
             headers = self.dump_headers(response.headers, hdr)

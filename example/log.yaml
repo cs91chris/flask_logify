@@ -7,7 +7,7 @@ formatters:
     syslog:
         format: "%(ident)s[%(asctime)s][%(levelname)s]: %(message)s"
     json:
-        class: flask_logify.formatters.RequestIDFormatter
+        class: flask_logify.formatters.RequestFormatter
         format: '{"requestId":"%(request_id)s","name":"%(name)s","level":"%(levelname)s","datetime":"%(asctime)s","message":%(message)s}'
 
 handlers:

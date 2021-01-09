@@ -20,10 +20,14 @@ class RequestFormatter(logging.Formatter):
             record.path = flask.request.full_path
             record.remote_addr = flask.request.remote_addr
 
-            h = flask.current_app.config.get('REQUEST_ID_HEADER') or 'X-Request-ID'
-            header = "HTTP_{}".format(h.upper().replace('-', '_'))
-            req_id = flask.g.request_id or flask.request.environ.get(header)
-            if req_id:
-                record.request_id = req_id
+            if hasattr(flask.g, 'request_id'):
+                request_id = flask.g.request_id
+            else:
+                h = flask.current_app.config['REQUEST_ID_HEADER']
+                header = "HTTP_{}".format(h.upper().replace('-', '_'))
+                request_id = flask.request.environ.get(header)
+
+            if request_id:
+                record.request_id = request_id
 
         return super().format(record)

@@ -70,6 +70,7 @@ Base configuration keys:
   2. ``LOG_FILE_CONF``: *(default: None)* absolute path of configuration file (has priority on LOGGING)
   3. ``LOG_APP_NAME``: *(default: flask)* the PROGRAM field of the log messages
   4. ``LOG_LOGGER_NAME``: *(default: flask-development)* usually is {LOG_APP_NAME}-{FLASK_ENV}
+  5. ``REQUEST_ID_HEADER``: *(default: X-Request-ID)* request id header key
 
 Text and JSON builder configuration keys:
 

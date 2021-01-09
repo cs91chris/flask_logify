@@ -2,6 +2,7 @@ import logging
 import logging.config
 from functools import wraps
 
+import flask
 import yaml
 
 from .builders import LogTextBuilder
@@ -37,6 +38,7 @@ class FlaskLogging:
         app.extensions['logify'] = self
 
         self.set_default_config(app)
+        self.set_request_id(app)
 
         if builder:
             app.before_request_funcs.setdefault(None, []).append(builder.dump_request)
@@ -61,6 +63,20 @@ class FlaskLogging:
                 app.logger.exception(exc, stack_info=False)
         else:
             app.logger.warning("No logging configuration provided using default configuration")
+
+    @staticmethod
+    def set_request_id(app):
+        """
+        Register request id in flask g
+
+        param app: Flask app instance
+        """
+
+        @app.before_request
+        def req_id():
+            h = flask.current_app.config['REQUEST_ID_HEADER']
+            header = "HTTP_{}".format(h.upper().replace('-', '_'))
+            flask.g.request_id = flask.request.environ.get(header)
 
     @staticmethod
     def disabled(filter_class, loggers=None, **options):
@@ -105,6 +121,7 @@ class FlaskLogging:
         app.config.setdefault('LOGGING', None)
         app.config.setdefault('LOG_REQ_HEADERS', [])
         app.config.setdefault('LOG_RESP_HEADERS', [])
+        app.config.setdefault('REQUEST_ID_HEADER', 'X-Request-ID')
         app.config.setdefault('LOG_SKIP_DUMP', not app.config.get('DEBUG'))
         app.config.setdefault('LOG_RESP_FORMAT', "{level} STATUS {status} {headers} {body}")
         app.config.setdefault('LOG_REQ_FORMAT', "{address} {method} {scheme} {path} {headers} {body}")

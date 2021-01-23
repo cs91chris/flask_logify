@@ -69,7 +69,7 @@ class LogTextBuilder(LogBuilder):
             headers=headers or '',
             body=body or ''
         )
-        cap.logger.debug("OUTGOING RESPONSE at {} {}".format(request.path, dump_resp))
+        cap.logger.info("OUTGOING RESPONSE at {} {}".format(request.path, dump_resp))
         return response
 
     def dump_headers(self, hdr, only=()):

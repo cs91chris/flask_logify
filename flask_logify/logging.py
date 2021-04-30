@@ -66,8 +66,8 @@ class FlaskLogging:
                 logging.config.dictConfig(self._conf)
                 app.logger = logging.getLogger(app.config['LOG_LOGGER_NAME'])
             except ValueError as exc:
-                app.logger.error('bad configuration file: {}'.format(app.config['LOG_FILE_CONF']))
-                app.logger.error('the configuration below\n{}'.format(self._conf))
+                app.logger.error(f"bad configuration file: {app.config['LOG_FILE_CONF']}")
+                app.logger.error(f"the configuration below\n{self._conf}")
                 app.logger.exception(exc, stack_info=False)
         else:
             app.logger.warning("No logging configuration provided using default configuration")
@@ -83,7 +83,7 @@ class FlaskLogging:
         @app.before_request
         def req_id():
             h = flask.current_app.config['REQUEST_ID_HEADER']
-            header = "HTTP_{}".format(h.upper().replace('-', '_'))
+            header = f"HTTP_{h.upper().replace('-', '_')}"
             flask.g.request_id = flask.request.environ.get(header)
 
     @staticmethod
@@ -98,7 +98,7 @@ class FlaskLogging:
         """
         if not issubclass(filter_class, logging.Filter):
             name = logging.Filter.__name__
-            raise ValueError("'{}' must be subclass of {}".format(filter_class, name))
+            raise ValueError(f"'{filter_class}' must be subclass of {name}")
 
         if not loggers:
             loggers = [None]  # root logger has no name
@@ -125,17 +125,23 @@ class FlaskLogging:
         param app: Flask app instance
         """
         app.config.setdefault('LOGGING', None)
-        app.config.setdefault('LOG_BUILDER', None)
         app.config.setdefault('LOG_FILE_CONF', None)
+        app.config.setdefault('LOG_BUILDER', 'text')
         app.config.setdefault('REQUEST_ID_HEADER', 'X-Request-ID')
 
         app.config.setdefault('LOG_REQ_SKIP_DUMP', not app.debug)
         app.config.setdefault('LOG_REQ_HEADERS', [])
-        app.config.setdefault('LOG_REQ_FORMAT', "{address} {method} {scheme} {path} {headers} {body}")
+        app.config.setdefault(
+            'LOG_REQ_FORMAT',
+            "INCOMING REQUEST: {address} {method} {scheme} {path}\n{headers}\n{body}\n"
+        )
 
         app.config.setdefault('LOG_RESP_SKIP_DUMP', app.debug)
         app.config.setdefault('LOG_RESP_HEADERS', [])
-        app.config.setdefault('LOG_RESP_FORMAT', "{level} STATUS {status} {headers} {body}")
+        app.config.setdefault(
+            'LOG_RESP_FORMAT',
+            "OUTGOING RESPONSE for {address} at {path}: {level} STATUS {status}\n{headers}\n{body}\n"
+        )
 
         app.config.setdefault('LOG_APP_NAME', app.config.get('APP_NAME') or 'flask')
         app.config.setdefault('LOG_LOGGER_NAME', '{}-{}'.format(

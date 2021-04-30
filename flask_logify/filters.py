@@ -34,7 +34,7 @@ class PathFilter(FilterByArgs):
         # ensure sub-paths are not accidentally excluded from logging
         super().__init__(
             name,
-            "\"{}\"".format(path),  # json format
-            "{} ".format(path),
-            "{}?".format(path)
+            f"\"{path}\"",  # json format
+            f"{path} ",
+            f"{path}?"
         )

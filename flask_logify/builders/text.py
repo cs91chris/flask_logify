@@ -8,10 +8,7 @@ from .base import BaseWrapper, LogBuilder
 
 class Wrapper(BaseWrapper, ABC):
     @staticmethod
-    def padding(text):
-        return f"\n{text}"
-
-    def dump_headers(self, hdr, only=()):
+    def dump_headers(hdr, only=()):
         """
         dumps http headers
 
@@ -24,9 +21,10 @@ class Wrapper(BaseWrapper, ABC):
         if only:
             hdr = {k: hdr[k] for k in only if k in hdr}
 
-        return self.padding('\n'.join(f'{k}: {v}' for k, v in hdr.items()))
+        return '\n'.join(f'{k}: {v}' for k, v in hdr.items())
 
-    def dump_body(self, r):
+    @staticmethod
+    def dump_body(r):
         """
         dump http body as plain text
 
@@ -34,56 +32,43 @@ class Wrapper(BaseWrapper, ABC):
         :return:
         """
         try:
-            return self.padding(r.get_data(as_text=True))
+            return r.get_data(as_text=True)
         except UnicodeError:
             return 'body not dumped: invalid encoding or binary file'
 
 
 class RequestWrap(Wrapper):
     def dump(self):
-        body = headers = ''
         request = self.data
         fmt = self.opts.get('fmt')
         hdr = self.opts.get('only')
         skip = self.opts.get('skip')
-        address = self.opts.get('addr')
-
-        if '{headers}' in fmt and (hdr or not skip):
-            headers = self.dump_headers(request.headers, hdr)
-        if '{body}' in fmt and not skip:
-            body = self.dump_body(request)
 
         return fmt.format(
-            address=address,
+            address=self.opts.get('addr'),
             method=request.method,
             scheme=request.scheme,
             path=request.full_path,
-            headers=headers,
-            body=body
+            headers=self.dump_headers(request.headers, hdr) if hdr or not skip else '',
+            body=self.dump_body(request) if not skip else ''
         )
 
 
 class ResponseWrap(Wrapper):
     def dump(self):
-        body = headers = ''
         response = self.data
-        fmt = self.opts.get('fmt')
+        fmt = self.opts.get('fmt') or ""
         hdr = self.opts.get('only')
         skip = self.opts.get('skip')
-        level = self.opts.get('level')
 
-        if '{headers}' in fmt and (hdr or not skip):
-            headers = self.dump_headers(response.headers, hdr)
-        if '{body}' in fmt and not skip:
-            body = self.dump_body(response)
-
-        dump_resp = fmt.format(
-            level=level,
+        return fmt.format(
             status=response.status,
-            headers=headers,
-            body=body
+            path=flask.request.path,
+            level=self.opts.get('level'),
+            address=self.opts.get('addr'),
+            headers=self.dump_headers(response.headers, hdr) if hdr or not skip else '',
+            body=self.dump_body(response) if not skip else ''
         )
-        return f"{flask.request.path} {dump_resp}"
 
 
 class LogTextBuilder(LogBuilder):
@@ -100,6 +85,7 @@ class LogTextBuilder(LogBuilder):
 
     def response_params(self):
         return {
+            'addr': self.get_remote_address(),
             'skip': cap.config['LOG_RESP_SKIP_DUMP'],
             'only': cap.config['LOG_RESP_HEADERS'],
             'fmt':  cap.config['LOG_RESP_FORMAT'],

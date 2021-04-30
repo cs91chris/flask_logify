@@ -19,5 +19,5 @@ class FlaskSysLogHandler(SysLogHandler):
         :param record:
         """
         priority = self.encodePriority(self.facility, self.mapPriority(record.levelname))
-        record.ident = "{}[{}]:".format(self._app_name, str(priority))
+        record.ident = f"{self._app_name}[{priority}]:"
         super(FlaskSysLogHandler, self).emit(record)

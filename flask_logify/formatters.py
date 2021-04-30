@@ -5,13 +5,13 @@ import flask
 
 class RequestFormatter(logging.Formatter):
     def format(self, record):
-        na = 'NA'
+        na = None
         record.url = na
         record.path = na
         record.method = na
         record.scheme = na
-        record.remote_addr = na
         record.request_id = na
+        record.remote_addr = na
 
         if flask.has_request_context():
             record.url = flask.request.url
@@ -24,7 +24,7 @@ class RequestFormatter(logging.Formatter):
                 request_id = flask.g.request_id
             else:
                 h = flask.current_app.config['REQUEST_ID_HEADER']
-                header = "HTTP_{}".format(h.upper().replace('-', '_'))
+                header = f"HTTP_{h.upper().replace('-', '_')}"
                 request_id = flask.request.environ.get(header)
 
             if request_id:

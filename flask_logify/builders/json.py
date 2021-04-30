@@ -1,11 +1,13 @@
+from abc import ABC
 from datetime import datetime
 
-from flask import current_app as cap, json, request
+import flask
+from flask import current_app as cap
 
-from .base import LogBuilder
+from .base import BaseWrapper, LogBuilder
 
 
-class LogJSONBuilder(LogBuilder):
+class Wrapper(BaseWrapper, ABC):
     @staticmethod
     def package_message(identifier, payload):
         """
@@ -14,64 +16,13 @@ class LogJSONBuilder(LogBuilder):
         :param payload:
         :return:
         """
-        return json.dumps({
+        return flask.json.dumps({
             'appName':    cap.config['LOG_APP_NAME'],
             'serverName': cap.config['SERVER_NAME'],
             'timestamp':  datetime.utcnow().timestamp(),
             'type':       identifier,
             **payload,
-        }, separators=(':', ','))
-
-    def dump_request(self):
-        """
-
-        """
-        body = None
-        headers = None
-        skip = cap.config['LOG_SKIP_DUMP']
-        hdr = cap.config['LOG_REQ_HEADERS']
-
-        if hdr or not skip:
-            headers = self.dump_headers(request.headers, hdr)
-
-        if not skip:
-            body = self.dump_body(request)
-
-        request_dumped = dict(
-            address=self.get_remote_address(),
-            method=request.method,
-            scheme=request.scheme,
-            path=request.full_path,
-            headers=headers,
-            body=body
-        )
-
-        cap.logger.info(self.package_message('request', request_dumped))
-
-    def dump_response(self, response):
-        """
-
-        :param response: Response object
-        """
-        body = None
-        headers = None
-        skip = cap.config['LOG_SKIP_DUMP']
-        hdr = cap.config['LOG_RESP_HEADERS']
-
-        if hdr or not skip:
-            headers = self.dump_headers(response.headers, hdr)
-
-        if not skip:
-            body = self.dump_body(response)
-
-        cap.logger.info(self.package_message('response', dict(
-            path=request.path,
-            status=response.status,
-            headers=headers,
-            body=body
-        )))
-
-        return response
+        }, separators=(',', ':'))
 
     @staticmethod
     def dump_headers(hdr, only=()):
@@ -108,3 +59,52 @@ class LogJSONBuilder(LogBuilder):
             return r.get_data(as_text=True)
         except UnicodeError:
             return 'body not dumped: invalid encoding or binary'
+
+
+class RequestWrap(Wrapper):
+    def dump(self):
+        request = self.data
+        skip = self.opts.get('skip')
+        hdr = self.opts.get('only')
+        address = self.opts.get('address')
+
+        return self.package_message('request', {
+            'address': address,
+            'method':  request.method,
+            'scheme':  request.scheme,
+            'path':    request.full_path,
+            'headers': self.dump_headers(request.headers, hdr) if hdr or not skip else '',
+            'body':    self.dump_body(request) if not skip else ''
+        })
+
+
+class ResponseWrap(Wrapper):
+    def dump(self):
+        response = self.data
+        skip = self.opts.get('skip')
+        hdr = self.opts.get('only')
+
+        return self.package_message('response', {
+            'path':    flask.request.path,
+            'status':  response.status,
+            'headers': self.dump_headers(response.headers, hdr) if hdr or not skip else '',
+            'body':    self.dump_body(response) if not skip else ''
+        })
+
+
+class LogJSONBuilder(LogBuilder):
+    wrapper_dump_request = RequestWrap
+    wrapper_dump_response = ResponseWrap
+
+    def request_params(self):
+        return {
+            'address': self.get_remote_address(),
+            'skip':    cap.config['LOG_REQ_SKIP_DUMP'],
+            'only':    cap.config['LOG_REQ_HEADERS'],
+        }
+
+    def response_params(self):
+        return {
+            'skip': cap.config['LOG_RESP_SKIP_DUMP'],
+            'only': cap.config['LOG_RESP_HEADERS'],
+        }

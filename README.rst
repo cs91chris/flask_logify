@@ -71,18 +71,20 @@ Base configuration keys:
   3. ``LOG_APP_NAME``: *(default: flask)* the PROGRAM field of the log messages
   4. ``LOG_LOGGER_NAME``: *(default: flask-development)* usually is {LOG_APP_NAME}-{FLASK_ENV}
   5. ``REQUEST_ID_HEADER``: *(default: X-Request-ID)* request id header key
+  6. ``LOG_BUILDER``: *(default: text)* log builder implementation (text, json)
 
 Text and JSON builder configuration keys:
 
   1. ``LOG_REQ_HEADERS``: *(default: [])* request headers to dump always
   2. ``LOG_RESP_HEADERS``: *(default: [])* response headers to dump always
-  3. ``LOG_SKIP_DUMP``: *(default: not DEBUG)* if true dump of body and headers are skipped
+  3. ``LOG_REQ_SKIP_DUMP``: *(default: not DEBUG)* if true dump of request body and headers are skipped
+  4. ``LOG_RESP_SKIP_DUMP``: *(default: DEBUG)* if true dump of response body and headers are skipped
 
 Text builder only:
 
-  1. ``LOG_RESP_FORMAT``: *(default: "{level} STATUS {status}\n\n{headers}\n\n{body}\n")*
+  1. ``LOG_RESP_FORMAT``: *(default: "OUTGOING RESPONSE for {address} at {path}: {level} STATUS {status}\n{headers}\n{body}\n")*
      log message format for response
-  2. ``LOG_REQ_FORMAT``: *(default: "{addr} {method} {scheme} {path}\n\n{headers}\n\n{body}\n")*
+  2. ``LOG_REQ_FORMAT``: *(default: "{address} {method} {scheme} {path}\n{headers}\n{body}\n")*
      log message format for request
 
 

@@ -66,8 +66,8 @@ class FlaskLogging:
                 logging.config.dictConfig(self._conf)
                 app.logger = logging.getLogger(app.config['LOG_LOGGER_NAME'])
             except ValueError as exc:
-                app.logger.error(f"bad configuration file: {app.config['LOG_FILE_CONF']}")
-                app.logger.error(f"the configuration below\n{self._conf}")
+                app.logger.error("bad configuration file: %s", app.config['LOG_FILE_CONF'])
+                app.logger.error("the configuration below\n", self._conf)
                 app.logger.exception(exc, stack_info=False)
         else:
             app.logger.warning("No logging configuration provided using default configuration")
@@ -133,14 +133,14 @@ class FlaskLogging:
         app.config.setdefault('LOG_REQ_HEADERS', [])
         app.config.setdefault(
             'LOG_REQ_FORMAT',
-            "INCOMING REQUEST: {address} {method} {scheme} {path}\n{headers}\n{body}\n"
+            "INCOMING REQUEST: {address} {method} {scheme} {path}\n{headers}\n{body}"
         )
 
         app.config.setdefault('LOG_RESP_SKIP_DUMP', app.debug)
         app.config.setdefault('LOG_RESP_HEADERS', [])
         app.config.setdefault(
             'LOG_RESP_FORMAT',
-            "OUTGOING RESPONSE for {address} at {path}: {level} STATUS {status}\n{headers}\n{body}\n"
+            "OUTGOING RESPONSE for {address} at {path}: {level} STATUS {status}\n{headers}\n{body}"
         )
 
         app.config.setdefault('LOG_APP_NAME', app.config.get('APP_NAME') or 'flask')

@@ -8,9 +8,10 @@ objects:
 
 formatters:
   default:
-    format: "[%(asctime)s][%(levelname)s][%(module)s:%(lineno)d]: %(message)s"
+    class: flask_logify.formatters.RequestFormatter
+    format: "[%(asctime)s][%(levelname)s][%(request_id)s][%(module)s:%(lineno)d]: %(message)s"
   syslog:
-    format: "%(ident)s[%(asctime)s][%(levelname)s]: %(message)s"
+    format: "%(ident)s[%(asctime)s][%(levelname)s][%(request_id)s]: %(message)s"
   json:
     class: flask_logify.formatters.RequestFormatter
     format: '{"requestId":"%(request_id)s","name":"%(name)s","level":"%(levelname)s","datetime":"%(asctime)s","message":%(message)s}'
@@ -19,7 +20,7 @@ handlers:
   console:
     class: logging.StreamHandler
     stream: ext://sys.stderr
-    formatter: default
+    formatter: json
   queue:
     class: flask_logify.handlers.QueueHandler
     respect_handler_level: true

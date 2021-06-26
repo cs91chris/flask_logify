@@ -4,7 +4,7 @@ from logging.config import ConvertingDict, ConvertingList, valid_ident
 from logging.handlers import QueueHandler as BaseQueueHandler, QueueListener, SysLogHandler
 from queue import Queue
 
-from flask import current_app as cap
+from flask import _request_ctx_stack, current_app as cap
 
 
 class FlaskSysLogHandler(SysLogHandler):
@@ -31,6 +31,7 @@ class QueueHandler(BaseQueueHandler):
     """
     From: https://rob-blackbourn.medium.com/how-to-use-python-logging-queuehandler-with-dictconfig-1e8b1284e27a
     """
+
     def __init__(self, handlers, respect_handler_level=False, auto_run=True, queue=None):
         # noinspection PyTypeChecker
         queue = self._resolve_queue(queue or Queue(-1))
@@ -44,6 +45,29 @@ class QueueHandler(BaseQueueHandler):
         if auto_run:
             self.start()
             atexit.register(self.stop)
+
+    @staticmethod
+    def _copy_current_request_context():
+        """
+        Return a copy of the current request context which can
+        then be used in queued handler processing
+        """
+        top = _request_ctx_stack.top
+        if top is None:  # pragma: no cover
+            raise RuntimeError(
+                'This function can only be used when a request context is on the stack.'
+                'For instance within view functions.'
+            )
+        return top.request
+
+    def prepare(self, record):
+        """
+        Return a prepared log record. Attach a copy of the current Flask
+        request context for use inside threaded handlers.
+        """
+        record = super().prepare(record)
+        record.request_context = self._copy_current_request_context()
+        return record
 
     def start(self):
         self._listener.start()

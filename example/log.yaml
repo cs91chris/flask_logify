@@ -8,12 +8,14 @@ objects:
 
 formatters:
   default:
-    class: flask_logify.formatters.RequestFormatter
+    (): flask_logify.formatters.RequestFormatter
+    request_id_header: X-Correlation-ID
     format: "[%(asctime)s][%(levelname)s][%(request_id)s][%(module)s:%(lineno)d]: %(message)s"
   syslog:
     format: "%(ident)s[%(asctime)s][%(levelname)s][%(request_id)s]: %(message)s"
   json:
-    class: flask_logify.formatters.RequestFormatter
+    (): flask_logify.formatters.RequestFormatter
+    request_id_header: X-Correlation-ID
     format: '{"requestId":"%(request_id)s","name":"%(name)s","level":"%(levelname)s","datetime":"%(asctime)s","message":%(message)s}'
 
 handlers:

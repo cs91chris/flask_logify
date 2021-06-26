@@ -1,25 +1,36 @@
 import logging
-import sys
+
+import flask
 
 
 class RequestFormatter(logging.Formatter):
+    def __init__(self, *args, **kwargs):
+        """
+
+        :param kwargs:
+        """
+        req_id_header = kwargs.pop('request_id_header', None) or 'X-Request-ID'
+        req_id_header = req_id_header.upper().replace('-', '_')
+        self.request_id_header = f"HTTP_{req_id_header}"
+        super().__init__(*args, **kwargs)
+
     def format(self, record):
         """
 
         :param record:
         :return:
         """
-        try:
+        if not flask.has_request_context():
             # noinspection PyUnresolvedReferences
-            request = record.request_context
+            request = record.request
+        else:
+            request = flask.request
 
-            record.url = request.url
-            record.method = request.method
-            record.scheme = request.scheme
-            record.path = request.full_path
-            record.remote_addr = request.remote_addr
-            record.request_id = request.environ.get("HTTP_X_REQUEST_ID")
-        except AttributeError as exc:
-            print(self, '-', str(exc), file=sys.stderr)
+        record.url = request.url
+        record.method = request.method
+        record.scheme = request.scheme
+        record.path = request.full_path
+        record.remote_addr = request.remote_addr
+        record.request_id = request.environ.get(self.request_id_header)
 
         return super().format(record)

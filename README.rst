@@ -82,9 +82,9 @@ Text and JSON builder configuration keys:
 
 Text builder only:
 
-  1. ``LOG_RESP_FORMAT``: *(default: "OUTGOING RESPONSE for {address} at {path}: {level} STATUS {status}\n{headers}\n{body}\n")*
+  1. ``LOG_RESP_FORMAT``: *(default: "OUTGOING RESPONSE for {address} at {path}: {level} STATUS {status}{headers}{body}")*
      log message format for response
-  2. ``LOG_REQ_FORMAT``: *(default: "{address} {method} {scheme} {path}\n{headers}\n{body}\n")*
+  2. ``LOG_REQ_FORMAT``: *(default: "{address} {method} {scheme} {path}{headers}{body}")*
      log message format for request
 
 

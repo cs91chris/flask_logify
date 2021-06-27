@@ -7,15 +7,21 @@ objects:
     maxsize: 10000
 
 formatters:
-  default:
+  consoleDebug:
     (): flask_logify.formatters.RequestFormatter
-    request_id_header: X-Correlation-ID
+    request_id_header: X-Request-ID
     format: "[%(asctime)s][%(levelname)s][%(request_id)s][%(module)s:%(lineno)d]: %(message)s"
+  console:
+    (): flask_logify.formatters.RequestFormatter
+    request_id_header: X-Request-ID
+    format: "[%(asctime)s][%(levelname)s][%(request_id)s]: %(message)s"
   syslog:
+    (): flask_logify.formatters.RequestFormatter
+    request_id_header: X-Request-ID
     format: "%(ident)s[%(asctime)s][%(levelname)s][%(request_id)s]: %(message)s"
   json:
     (): flask_logify.formatters.RequestFormatter
-    request_id_header: X-Correlation-ID
+    request_id_header: X-Request-ID
     format: '{"requestId":"%(request_id)s","name":"%(name)s","level":"%(levelname)s","datetime":"%(asctime)s","message":%(message)s}'
 
 handlers:
@@ -23,7 +29,7 @@ handlers:
     class: logging.StreamHandler
     stream: ext://sys.stderr
     formatter: json
-  queue:
+  queueConsole:
     class: flask_logify.handlers.QueueHandler
     respect_handler_level: true
     queue: cfg://objects.queue
@@ -37,7 +43,7 @@ handlers:
     level: INFO
   file:
     class: logging.handlers.RotatingFileHandler
-    formatter: default
+    formatter: consoleDebug
     level: DEBUG
     filename: flask.log
     maxBytes: 10485760
@@ -46,7 +52,7 @@ handlers:
 
 loggers:
   flask-development:
-    handlers: [ queue ]
+    handlers: [ queueConsole ]
     propogate: yes
     level: DEBUG
   flask-testing:

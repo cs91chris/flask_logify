@@ -47,10 +47,9 @@ class QueueHandler(BaseQueueHandler):
             atexit.register(self.stop)
 
     @staticmethod
-    def _copy_current_request_context():
+    def _get_request_context():
         """
-        Return a copy of the current request context which can
-        then be used in queued handler processing
+        Return the current request context which can then be used in queued handler
         """
         top = _request_ctx_stack.top
         if top is None:  # pragma: no cover
@@ -62,11 +61,10 @@ class QueueHandler(BaseQueueHandler):
 
     def prepare(self, record):
         """
-        Return a prepared log record. Attach a copy of the current Flask
-        request context for use inside threaded handlers.
+        Return a prepared log record. Attach a request context for use inside threaded handlers
         """
         record = super().prepare(record)
-        record.request_context = self._copy_current_request_context()
+        record.request = self._get_request_context()
         return record
 
     def start(self):

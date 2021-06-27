@@ -86,7 +86,7 @@ class ResponseWrap(Wrapper):
 
         return self.package_message('response', {
             'path':    flask.request.path,
-            'status':  response.status,
+            'status':  response.status_code,
             'headers': self.dump_headers(response.headers, hdr) if hdr or not skip else '',
             'body':    self.dump_body(response) if not skip else ''
         })

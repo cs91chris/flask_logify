@@ -28,8 +28,11 @@ class RequestFormatter(logging.Formatter):
         record.request_id = None
 
         if not flask.has_request_context():
-            # noinspection PyUnresolvedReferences
-            request = record.request
+            try:
+                # noinspection PyUnresolvedReferences
+                request = record.request
+            except AttributeError:
+                request = None
         else:
             request = flask.request
 

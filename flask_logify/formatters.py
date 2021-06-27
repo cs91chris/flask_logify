@@ -20,17 +20,27 @@ class RequestFormatter(logging.Formatter):
         :param record:
         :return:
         """
+        record.url = None
+        record.method = None
+        record.scheme = None
+        record.path = None
+        record.remote_addr = None
+        record.request_id = None
+
         if not flask.has_request_context():
             # noinspection PyUnresolvedReferences
             request = record.request
         else:
             request = flask.request
 
-        record.url = request.url
-        record.method = request.method
-        record.scheme = request.scheme
-        record.path = request.full_path
-        record.remote_addr = request.remote_addr
-        record.request_id = request.environ.get(self.request_id_header)
+        try:
+            record.url = request.url
+            record.method = request.method
+            record.scheme = request.scheme
+            record.path = request.full_path
+            record.remote_addr = request.remote_addr
+            record.request_id = request.environ.get(self.request_id_header)
+        except (RuntimeError, AttributeError):
+            pass
 
         return super().format(record)

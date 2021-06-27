@@ -52,12 +52,8 @@ class QueueHandler(BaseQueueHandler):
         Return the current request context which can then be used in queued handler
         """
         top = _request_ctx_stack.top
-        if top is None:  # pragma: no cover
-            raise RuntimeError(
-                'This function can only be used when a request context is on the stack.'
-                'For instance within view functions.'
-            )
-        return top.request
+        if top:
+            return top.request
 
     def prepare(self, record):
         """

@@ -21,7 +21,8 @@ class Wrapper(BaseWrapper, ABC):
         if only:
             hdr = {k: hdr[k] for k in only if k in hdr}
 
-        return '\n'.join(f'{k}: {v}' for k, v in hdr.items())
+        headers = '\n'.join(f'{k}: {v}' for k, v in hdr.items())
+        return f'\n{headers}' if headers else headers
 
     @staticmethod
     def dump_body(r):
@@ -32,42 +33,57 @@ class Wrapper(BaseWrapper, ABC):
         :return:
         """
         try:
-            return r.get_data(as_text=True)
+            body = r.get_data(as_text=True)
         except UnicodeError:
-            return 'body not dumped: invalid encoding or binary file'
+            body = 'body not dumped: invalid encoding or binary file'
+        return f'\n{body}' if body else body
 
 
 class RequestWrap(Wrapper):
     def dump(self):
+        body = ''
+        headers = ''
         request = self.data
-        fmt = self.opts.get('fmt')
         hdr = self.opts.get('only')
         skip = self.opts.get('skip')
+        fmt = self.opts.get('fmt') or ""
+
+        if '{headers}' in fmt and (hdr or not skip):
+            headers = self.dump_headers(request.headers, hdr)
+        if '{body}' in fmt and not skip:
+            body = self.dump_body(request)
 
         return fmt.format(
             address=self.opts.get('addr'),
             method=request.method,
             scheme=request.scheme,
             path=request.full_path,
-            headers=self.dump_headers(request.headers, hdr) if hdr or not skip else '',
-            body=self.dump_body(request) if not skip else ''
+            headers=headers,
+            body=body
         )
 
 
 class ResponseWrap(Wrapper):
     def dump(self):
+        body = ''
+        headers = ''
         response = self.data
-        fmt = self.opts.get('fmt') or ""
         hdr = self.opts.get('only')
         skip = self.opts.get('skip')
+        fmt = self.opts.get('fmt') or ""
+
+        if '{headers}' in fmt and (hdr or not skip):
+            headers = self.dump_headers(response.headers, hdr)
+        if '{body}' in fmt and not skip:
+            body = self.dump_body(response)
 
         return fmt.format(
             status=response.status,
             path=flask.request.path,
             level=self.opts.get('level'),
             address=self.opts.get('addr'),
-            headers=self.dump_headers(response.headers, hdr) if hdr or not skip else '',
-            body=self.dump_body(response) if not skip else ''
+            headers=headers,
+            body=body
         )
 
 

@@ -133,18 +133,16 @@ class FlaskLogging:
         app.config.setdefault('LOG_REQ_HEADERS', [])
         app.config.setdefault(
             'LOG_REQ_FORMAT',
-            "INCOMING REQUEST: {address} {method} {scheme} {path}\n{headers}\n{body}"
+            "INCOMING REQUEST: {address} {method} {scheme} {path}{headers}{body}"
         )
 
         app.config.setdefault('LOG_RESP_SKIP_DUMP', app.debug)
         app.config.setdefault('LOG_RESP_HEADERS', [])
         app.config.setdefault(
             'LOG_RESP_FORMAT',
-            "OUTGOING RESPONSE for {address} at {path}: {level} STATUS {status}\n{headers}\n{body}"
+            "OUTGOING RESPONSE for {address} at {path}: {level} STATUS {status}{headers}{body}"
         )
 
+        env = app.config.get('FLASK_ENV') or 'development'
         app.config.setdefault('LOG_APP_NAME', app.config.get('APP_NAME') or 'flask')
-        app.config.setdefault('LOG_LOGGER_NAME', '{}-{}'.format(
-            app.config['LOG_APP_NAME'],
-            app.config.get('FLASK_ENV') or 'development'
-        ))
+        app.config.setdefault('LOG_LOGGER_NAME', f"{env}")

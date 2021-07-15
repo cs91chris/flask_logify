@@ -9,6 +9,7 @@ class RequestFormatter(logging.Formatter):
 
         :param kwargs:
         """
+        self.app_name = flask.current_app.config['LOG_APP_NAME']
         req_id_header = kwargs.pop('request_id_header', None) or 'X-Request-ID'
         req_id_header = req_id_header.upper().replace('-', '_')
         self.request_id_header = f"HTTP_{req_id_header}"
@@ -46,4 +47,5 @@ class RequestFormatter(logging.Formatter):
         except (RuntimeError, AttributeError):
             pass
 
+        record.appname = self.app_name
         return super().format(record)

@@ -22,7 +22,15 @@ formatters:
   json:
     (): flask_logify.formatters.RequestFormatter
     request_id_header: X-Request-ID
-    format: '{"requestId":"%(request_id)s","name":"%(name)s","level":"%(levelname)s","datetime":"%(asctime)s","message":%(message)s}'
+    format: '{
+      "appname":"%(appname)s",
+      "requestId":"%(request_id)s",
+      "name":"%(name)s",
+      "level":"%(levelname)s",
+      "datetime":"%(asctime)s",
+      "remote":"%(remote_addr)s",
+      "message":%(message)s
+    }'
 
 handlers:
   console:

@@ -17,11 +17,11 @@ The dump of request or response are made by builders, there are two concrete imp
 You can create your own builder by extending class ``LogBuilder``. In order to get the correct remote address
 you can override ``LogBuilder.get_remote_address`` method or you can inject a function in ``LogBuilder`` constructor.
 
-See example usage in `example/text.py <./flask_logify/example/text.py>`__.
+See example usage in `example/test.py <./flask_logify/example/test.py>`__.
 
 ``FlaskLogging`` as a decorator attribute with which you can disable log messages for a specific route,
 passing a logging filter to it. For example you want disable log for health check endpoint.
-See `example/text.py <./flask_logify/example/text.py>`__.
+See `example/text.py <./flask_logify/example/test.py>`__.
 
 
 Quickstart
@@ -68,7 +68,7 @@ Base configuration keys:
 
   1. ``LOGGING``: *(default: None)* dict logging configuration
   2. ``LOG_FILE_CONF``: *(default: None)* absolute path of configuration file (has priority on LOGGING)
-  3. ``LOG_APP_NAME``: *(default: flask)* the PROGRAM field of the log messages
+  3. ``LOG_APP_NAME``: *(default: flask)* the ident of the record used by syslog
   4. ``LOG_LOGGER_NAME``: *(default: flask-development)* usually is {LOG_APP_NAME}-{FLASK_ENV}
   5. ``REQUEST_ID_HEADER``: *(default: X-Request-ID)* request id header key
   6. ``LOG_BUILDER``: *(default: text)* log builder implementation (text, json)
@@ -84,7 +84,7 @@ Text builder only:
 
   1. ``LOG_RESP_FORMAT``: *(default: "OUTGOING RESPONSE for {address} at {path}: {level} STATUS {status}{headers}{body}")*
      log message format for response
-  2. ``LOG_REQ_FORMAT``: *(default: "{address} {method} {scheme} {path}{headers}{body}")*
+  2. ``LOG_REQ_FORMAT``: *(default: "INCOMING REQUEST: {address} {method} {scheme} {path}{headers}{body}")*
      log message format for request
 
 

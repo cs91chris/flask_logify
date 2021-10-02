@@ -16,13 +16,16 @@ class Wrapper(BaseWrapper, ABC):
         :param payload:
         :return:
         """
-        return flask.json.dumps({
-            'appName':    cap.config['LOG_APP_NAME'],
-            'serverName': cap.config['SERVER_NAME'],
-            'timestamp':  datetime.utcnow().timestamp(),
-            'type':       identifier,
-            **payload,
-        }, separators=(',', ':'))
+        return flask.json.dumps(
+            {
+                "appName": cap.config["LOG_APP_NAME"],
+                "serverName": cap.config["SERVER_NAME"],
+                "timestamp": datetime.utcnow().timestamp(),
+                "type": identifier,
+                **payload,
+            },
+            separators=(",", ":"),
+        )
 
     @staticmethod
     def dump_headers(hdr, only=()):
@@ -58,38 +61,48 @@ class Wrapper(BaseWrapper, ABC):
         try:
             return r.get_data(as_text=True)
         except UnicodeError:
-            return 'body not dumped: invalid encoding or binary'
+            return "body not dumped: invalid encoding or binary"
 
 
 class RequestWrap(Wrapper):
     def dump(self):
         request = self.data
-        skip = self.opts.get('skip')
-        hdr = self.opts.get('only')
-        address = self.opts.get('address')
+        skip = self.opts.get("skip")
+        hdr = self.opts.get("only")
+        address = self.opts.get("address")
 
-        return self.package_message('request', {
-            'address': address,
-            'method':  request.method,
-            'scheme':  request.scheme,
-            'path':    request.full_path,
-            'headers': self.dump_headers(request.headers, hdr) if hdr or not skip else '',
-            'body':    self.dump_body(request) if not skip else ''
-        })
+        return self.package_message(
+            "request",
+            {
+                "address": address,
+                "method": request.method,
+                "scheme": request.scheme,
+                "path": request.full_path,
+                "headers": self.dump_headers(request.headers, hdr)
+                if hdr or not skip
+                else "",
+                "body": self.dump_body(request) if not skip else "",
+            },
+        )
 
 
 class ResponseWrap(Wrapper):
     def dump(self):
         response = self.data
-        skip = self.opts.get('skip')
-        hdr = self.opts.get('only')
+        skip = self.opts.get("skip")
+        hdr = self.opts.get("only")
 
-        return self.package_message('response', {
-            'path':    flask.request.path,
-            'status':  response.status_code,
-            'headers': self.dump_headers(response.headers, hdr) if hdr or not skip else '',
-            'body':    self.dump_body(response) if not skip else ''
-        })
+        return self.package_message(
+            "response",
+            {
+                "path": flask.request.path,
+                "status": response.status_code,
+                "headers": self.dump_headers(response.headers, hdr)
+                if hdr or not skip
+                else "",
+                "body": self.dump_body(response) if not skip else "",
+            },
+        )
 
 
 class LogJSONBuilder(LogBuilder):
@@ -98,13 +111,13 @@ class LogJSONBuilder(LogBuilder):
 
     def request_params(self):
         return {
-            'address': self.get_remote_address(),
-            'skip':    cap.config['LOG_REQ_SKIP_DUMP'],
-            'only':    cap.config['LOG_REQ_HEADERS'],
+            "address": self.get_remote_address(),
+            "skip": cap.config["LOG_REQ_SKIP_DUMP"],
+            "only": cap.config["LOG_REQ_HEADERS"],
         }
 
     def response_params(self):
         return {
-            'skip': cap.config['LOG_RESP_SKIP_DUMP'],
-            'only': cap.config['LOG_RESP_HEADERS'],
+            "skip": cap.config["LOG_RESP_SKIP_DUMP"],
+            "only": cap.config["LOG_RESP_HEADERS"],
         }

@@ -48,22 +48,31 @@ class LogBuilder:
     def level_from_code(code):
         code = int(code / 100)
         if code in (1, 2, 3):
-            return cap.logger.info, 'SUCCESS'
+            return cap.logger.info, "SUCCESS"
         elif code == 4:
-            return cap.logger.warning, 'WARNING'
+            return cap.logger.warning, "WARNING"
         elif code == 5:
-            return cap.logger.warning, 'ERROR'
+            return cap.logger.warning, "ERROR"
         else:
-            return cap.logger.warning, 'ERROR'
+            return cap.logger.warning, "ERROR"
 
     def dump_request(self):
-        cap.logger.info("%s", self.wrapper_dump_request(
-            request, **self.request_params()
-        ))
+        cap.logger.info(
+            "%s",
+            self.wrapper_dump_request(
+                request,
+                **self.request_params(),
+            ),
+        )
 
     def dump_response(self, response):
         log, level = self.level_from_code(response.status_code)
-        log("%s", self.wrapper_dump_response(
-            response, level=level, **self.response_params()
-        ))
+        log(
+            "%s",
+            self.wrapper_dump_response(
+                response,
+                level=level,
+                **self.response_params(),
+            ),
+        )
         return response

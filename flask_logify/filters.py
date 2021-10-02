@@ -2,7 +2,7 @@ import logging
 
 
 class FilterByArgs(logging.Filter):
-    def __init__(self, name='', *args):
+    def __init__(self, name="", *args):
         """
 
         :param name:
@@ -25,23 +25,18 @@ class FilterByArgs(logging.Filter):
 
 
 class PathFilter(FilterByArgs):
-    def __init__(self, path, name=''):
+    def __init__(self, path, name=""):
         """
 
         :param path:
         :param name:
         """
         # ensure sub-paths are not accidentally excluded from logging
-        super().__init__(
-            name,
-            f"\"{path}\"",  # json format
-            f"{path} ",
-            f"{path}?"
-        )
+        super().__init__(name, f'"{path}"', f"{path} ", f"{path}?")  # json format
 
 
 class OnlyPathsFilter(logging.Filter):
-    def __init__(self, name='', paths=()):
+    def __init__(self, name="", paths=()):
         """
 
         :param name:
@@ -56,7 +51,7 @@ class OnlyPathsFilter(logging.Filter):
         :param record:
         :return: False if message must be filtered
         """
-        if not hasattr(record, 'path'):
+        if not hasattr(record, "path"):
             return True
 
         # noinspection PyUnresolvedReferences

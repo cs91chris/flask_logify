@@ -71,7 +71,8 @@ class QueueHandler(BaseQueueHandler):
 
     def prepare(self, record):
         """
-        Return a prepared log record. Attach a request context for use inside threaded handlers
+        Return a prepared log record.
+        Attach a request context for use inside threaded handlers
         """
         record = super().prepare(record)
         record.request = self._get_request_context()

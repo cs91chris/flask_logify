@@ -32,8 +32,7 @@ def grep(file, name):
     :param name:
     :return:
     """
-    pattern = r"{attr}\W*=\W*'([^']+)'".format(attr=name)
-    (value,) = re.findall(pattern, read(file))
+    (value,) = re.findall(rf"{name}\W*=\W*'([^']+)'", read(file))
     return value
 
 
@@ -51,11 +50,9 @@ def readme(file):
 
 class PyTest(test):
     def finalize_options(self):
-        """ """
         test.finalize_options(self)
 
     def run_tests(self):
-        """ """
         # noinspection PyUnresolvedReferences
         import pytest
 

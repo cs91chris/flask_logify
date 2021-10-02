@@ -40,7 +40,7 @@ class Wrapper(BaseWrapper, ABC):
         """
 
         def dump(h):
-            return {k: v for k, v in h.items()}
+            return dict(h.items())
 
         if only:
             return dump({k: hdr[k] for k in only if k in hdr})

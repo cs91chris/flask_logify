@@ -34,7 +34,7 @@ class FlaskLogging:
         :param builder:
         """
         if not hasattr(app, "extensions"):
-            app.extensions = dict()
+            app.extensions = {}
         app.extensions["logify"] = self
 
         self.set_default_config(app)
@@ -43,7 +43,7 @@ class FlaskLogging:
         if app.config["LOG_BUILDER"]:
             builder = builder_factory(app.config["LOG_BUILDER"])
 
-        if type(builder) is str:
+        if isinstance(builder, str):
             builder = builder_factory(builder)
 
         if builder:
@@ -53,7 +53,7 @@ class FlaskLogging:
 
         if app.config["LOG_FILE_CONF"]:
             try:
-                with open(app.config["LOG_FILE_CONF"]) as f:
+                with open(app.config["LOG_FILE_CONF"], encoding="utf-8") as f:
                     self._conf = yaml.safe_load(f)
             except (OSError, IOError, yaml.YAMLError) as exc:
                 app.logger.exception(exc, stack_info=False)

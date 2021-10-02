@@ -31,7 +31,7 @@ class FlaskSysLogHandler(SysLogHandler):
             self.facility, self.mapPriority(record.levelname)
         )
         record.ident = f"{self._app_name}[{priority}]:"
-        super(FlaskSysLogHandler, self).emit(record)
+        super().emit(record)
 
 
 class QueueHandler(BaseQueueHandler):

@@ -49,12 +49,11 @@ class LogBuilder:
         code = int(code / 100)
         if code in (1, 2, 3):
             return cap.logger.info, "SUCCESS"
-        elif code == 4:
+        if code == 4:
             return cap.logger.warning, "WARNING"
-        elif code == 5:
+        if code == 5:
             return cap.logger.warning, "ERROR"
-        else:
-            return cap.logger.warning, "ERROR"
+        return cap.logger.error, "ERROR"
 
     def dump_request(self):
         cap.logger.info(

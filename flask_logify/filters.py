@@ -2,7 +2,7 @@ import logging
 
 
 class FilterByArgs(logging.Filter):
-    def __init__(self, name="", *args):
+    def __init__(self, *args, name=""):
         """
 
         :param name:

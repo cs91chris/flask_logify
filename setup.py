@@ -32,7 +32,7 @@ def grep(file, name):
     :param name:
     :return:
     """
-    (value,) = re.findall(rf"{name}\W*=\W*'([^']+)'", read(file))
+    (value,) = re.findall(rf"{name}\W*=\W*\"([^\"]+)\"", read(file))
     return value
 
 

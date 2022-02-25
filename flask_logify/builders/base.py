@@ -56,10 +56,11 @@ class LogBuilder:
         return cap.logger.error, "ERROR"
 
     def dump_request(self):
+        # noinspection PyUnresolvedReferences,PyProtectedMember
         cap.logger.info(
             "%s",
             self.wrapper_dump_request(
-                request,
+                request._get_current_object(),
                 **self.request_params(),
             ),
         )

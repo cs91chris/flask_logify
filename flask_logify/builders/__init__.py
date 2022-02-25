@@ -4,7 +4,7 @@ from .text import LogTextBuilder
 
 
 def builder_factory(name):
-    if name == 'text':
+    if name == "text":
         return LogTextBuilder()
-    if name == 'json':
+    if name == "json":
         return LogJSONBuilder()

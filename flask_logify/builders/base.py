@@ -31,11 +31,11 @@ class LogBuilder:
 
     @abstractmethod
     def request_params(self):
-        """"""
+        return {}
 
     @abstractmethod
     def response_params(self):
-        """"""
+        return {}
 
     def get_remote_address(self):
         """
